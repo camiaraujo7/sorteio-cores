@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sorteio de Cores</title>
+<style>
+:root{--bg:#f5f3ef;--ink:#242321;--muted:#77736d;--accent:#9e803e;--line:#e5e0d7;--card:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1050px;margin:0 auto;padding:42px 22px 60px}
+header{text-align:center;margin-bottom:30px}
+.eyebrow{font-size:11px;letter-spacing:.19em;text-transform:uppercase;color:var(--accent);font-weight:700}
+h1{font-family:Georgia,serif;font-weight:500;font-size:clamp(34px,5vw,52px);margin:10px 0}
+header p{color:var(--muted);margin:0;font-size:15px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 12px 35px #29251c0a}
+.columns{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+h2{font-size:14px;text-transform:uppercase;letter-spacing:.1em;margin:0 0 16px;color:#5b574f}
+.field{display:flex;align-items:center;gap:10px;margin:10px 0}
+.field input[type=text]{width:100%;min-width:0;border:1px solid var(--line);border-radius:10px;padding:12px 13px;font:inherit;font-size:14px;background:#fff;color:var(--ink)}
+.field input:focus{outline:2px solid #9e803e55;border-color:var(--accent)}
+.color-dot{width:22px;height:22px;border-radius:50%;flex:none;border:1px solid #0002}
+.color-field{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:10px;padding:5px 10px;flex:1}
+.color-field input[type=text]{border:0;padding:7px 2px;outline:none}
+.color-field input[type=color]{width:30px;height:30px;border:0;background:none;padding:0;cursor:pointer}
+.actions{display:flex;justify-content:center;margin:24px 0 8px}
+button{border:0;border-radius:999px;background:#292823;color:white;padding:15px 34px;font:inherit;font-weight:650;letter-spacing:.02em;cursor:pointer;transition:transform .2s,opacity .2s}
+button:hover{transform:translateY(-2px)}
+button:disabled{opacity:.55;cursor:wait;transform:none}
+.hint{text-align:center;color:var(--muted);font-size:12px;margin:12px 0 0}
+.result{margin-top:24px;display:none}
+.result.show{display:block}
+.result-head{text-align:center;margin:0 0 18px}
+.result-head .eyebrow{margin-bottom:6px}
+.result-head h2{font-family:Georgia,serif;text-transform:none;letter-spacing:0;font-size:29px;font-weight:500;color:var(--ink);margin:0}
+.pairs{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.pair{border:1px solid var(--line);border-radius:14px;background:#fff;padding:20px 12px;text-align:center;min-height:145px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.pair .swatch{width:48px;height:48px;border-radius:50%;box-shadow:inset 0 0 0 1px #0001,0 3px 10px #0001}
+.pair .name{font-weight:700;font-size:16px;overflow-wrap:anywhere}
+.pair .color-name{font-size:12px;color:var(--muted)}
+.pair.spinning{animation:pulse .18s ease-in-out infinite alternate}
+@keyframes pulse{from{transform:translateY(0);opacity:.65}to{transform:translateY(-3px);opacity:1}}
+.footer{text-align:center;color:var(--muted);font-size:11px;margin-top:18px}
+@media(max-width:650px){main{padding:28px 14px}.columns{grid-template-columns:1fr;gap:22px}.pairs{grid-template-columns:repeat(2,1fr)}.panel{padding:18px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div class="eyebrow">Sorteio aleatório</div>
+<h1>Quem fica com qual cor?</h1>
+<p>Cadastre quatro nomes e quatro cores. O sorteio faz uma associação para cada pessoa, sem repetir.</p>
+</header>
+<section class="panel">
+<div class="columns">
+<div>
+<h2>01 · Nomes</h2>
+<div class="field"><input id="name0" type="text" value="Libertas" aria-label="Libertas"></div>
+<div class="field"><input id="name1" type="text" value="Fraternitas" aria-label="Fraternitas"></div>
+<div class="field"><input id="name2" type="text" value="Veritas" aria-label="Veritas"></div>
+<div class="field"><input id="name3" type="text" value="Encantare" aria-label="Encantare"></div>
+</div>
+<div>
+<h2>02 · Cores</h2>
+<div class="field"><span class="color-dot" id="dot0" style="background:#c2476c"></span><div class="color-field"><input id="colorname0" type="text" value="Rosa" aria-label="Nome da cor vermelha"><input id="color0" type="color" value="#c2476c" aria-label="Escolher cor vermelha"></div></div>
+<div class="field"><span class="color-dot" id="dot1" style="background:#501b4f"></span><div class="color-field"><input id="colorname1" type="text" value="Roxo" aria-label="Nome da cor amarela"><input id="color1" type="color" value="#501b4f" aria-label="Escolher cor amarela"></div></div>
+<div class="field"><span class="color-dot" id="dot2" style="background:#f9c44e"></span><div class="color-field"><input id="colorname2" type="text" value="Amarelo" aria-label="Nome da cor verde"><input id="color2" type="color" value="#f9c44e" aria-label="Escolher cor verde"></div></div>
+<div class="field"><span class="color-dot" id="dot3" style="background:#254633"></span><div class="color-field"><input id="colorname3" type="text" value="Verde" aria-label="Nome da cor azul"><input id="color3" type="color" value="#254633" aria-label="Escolher cor azul"></div></div>
+</div>
+</div>
+<div class="actions"><button id="draw">Embaralhar e sortear</button></div>
+<p class="hint">Cada nome recebe uma única cor. Nenhuma cor será repetida.</p>
+</section>
+<section class="result" id="result" aria-live="polite">
+<div class="result-head"><div class="eyebrow">Resultado do sorteio</div><h2>As combinações sorteadas</h2></div>
+<div class="pairs" id="pairs"></div>
+<div class="actions"><button id="again">Sortear novamente</button></div>
+</section>
+<div class="footer">Sorteio aleatório · 4 pessoas · 4 cores</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+for(let i=0;i<4;i++) $('color'+i).addEventListener('input',e=>$('dot'+i).style.background=e.target.value);
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+async function draw(){
+ const names=Array.from({length:4},(_,i)=>$('name'+i).value.trim());
+ const colors=Array.from({length:4},(_,i)=>({name:$('colorname'+i).value.trim(),hex:$('color'+i).value}));
+ if(names.some(x=>!x)||colors.some(x=>!x.name)){alert('Preencha os quatro nomes e os nomes das quatro cores.');return;}
+ if(new Set(names.map(x=>x.toLocaleLowerCase('pt-BR'))).size!==4){alert('Use quatro nomes diferentes para identificar cada pessoa.');return;}
+ const btn=$('draw');btn.disabled=true;$('again').disabled=true;
+ const area=$('result');area.classList.add('show');
+ const pairs=$('pairs');pairs.innerHTML='';
+ const shuffledNames=shuffle([...names]);const shuffledColors=shuffle([...colors]);
+ for(let i=0;i<4;i++){const el=document.createElement('div');el.className='pair spinning';el.innerHTML='<div class="swatch"></div><div class="name">Embaralhando…</div><div class="color-name">Aguarde</div>';pairs.appendChild(el);}
+ const cards=[...pairs.children];
+ let ticks=0;
+ const interval=setInterval(()=>{
+   cards.forEach((card,i)=>{
+     const n=names[Math.floor(Math.random()*4)],c=colors[Math.floor(Math.random()*4)];
+     card.querySelector('.name').textContent=n;
+     card.querySelector('.swatch').style.background=c.hex;
+     card.querySelector('.color-name').textContent=c.name;
+   });
+   ticks++;
+   if(ticks>=18){
+     clearInterval(interval);
+     cards.forEach((card,i)=>{
+       card.classList.remove('spinning');
+       card.querySelector('.name').textContent=shuffledNames[i];
+       card.querySelector('.swatch').style.background=shuffledColors[i].hex;
+       card.querySelector('.color-name').textContent=shuffledColors[i].name;
+     });
+     btn.disabled=false;$('again').disabled=false;
+     area.scrollIntoView({behavior:'smooth',block:'nearest'});
+   }
+ },110);
+}
+$('draw').addEventListener('click',draw);
+$('again').addEventListener('click',draw);
+</script>
+</body>
+</html>
